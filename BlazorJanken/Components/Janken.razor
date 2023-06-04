@@ -1,18 +1,11 @@
-﻿@using Components.Enums
-@using System.Data
+﻿@using BlazorJanken.Components.Enums
 @inject ILogger Logger
 
 <h3>Rock Paper Scissors</h3>
 <p>Choose a shape</p>
-<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Rock); })">
-    Rock
-</button>
-<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Paper); })">
-    Paper
-</button>
-<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Scissors); })">
-    Scissors
-</button>
+<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Rock); })">Rock</button>
+<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Paper); })">Paper</button>
+<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Scissors); })">Scissors</button>
 <hr/>
 <div>Results - Round @(_playerGameStates.Count)</div>
 @if (_playerGameStates.Count is 0)
@@ -22,9 +15,7 @@
 else
 {
     LatestState = _playerGameStates.Last();
-    {
-        UpdateJankenScore(LatestState);
-    }
+    UpdateJankenScore(LatestState);
     <JankenResult State="@LatestState"></JankenResult>
 }
 <hr/>
@@ -38,7 +29,7 @@ else
 
     private int PlayerScore { get; set; }
     private int ComputerScore { get; set; }
-    private GameState LatestState { get; set; } 
+    private GameState LatestState { get; set; }
 
     private Task JankenRound(Shape playerChoice)
     {
