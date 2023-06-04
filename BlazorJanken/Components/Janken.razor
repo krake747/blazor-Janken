@@ -1,0 +1,63 @@
+﻿@inject ILogger Logger
+
+<h3>Rock Paper Scissors</h3>
+<p>Choose a shape</p>
+<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Rock); })">
+    Rock
+</button>
+<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Paper); })">
+    Paper
+</button>
+<button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Scissors); })">
+    Scissors
+</button>
+
+@code {
+    private readonly Shape[] _handShapes = { Shape.Rock, Shape.Paper, Shape.Scissors };
+
+    private void JankenRound(Shape playerChoice)
+    {
+        var computer = ComputerChoice();
+        Logger.Information("Player 1 {Choice} vs Computer {Random}", EnumName(playerChoice), EnumName(computer));
+
+        if (playerChoice == computer)
+        {
+            Logger.Information("Round ends in {State}", nameof(GameState.Draw));
+        }
+
+        var state = (playerChoice, computer) switch 
+        {
+            (Shape.Rock, Shape.Paper) => GameState.Loss,
+            (Shape.Paper, Shape.Scissors) => GameState.Loss,
+            (Shape.Scissors, Shape.Rock) => GameState.Loss,
+            (_, _) => GameState.Win
+            };
+
+        Logger.Information("Round ends in {State} for Player", EnumName(state));
+    }
+
+    private Shape ComputerChoice()
+    {
+        return _handShapes[Random.Shared.Next(0, 3)];
+    }
+
+    private static string EnumName<T>(T enumObj) where T : Enum
+    {
+        return Enum.GetName(typeof(T), enumObj) ?? string.Empty;
+    }
+
+    public enum Shape
+    {
+        Rock,
+        Paper,
+        Scissors
+    }
+
+    public enum GameState
+    {
+        Draw,
+        Win,
+        Loss
+    }
+
+}
