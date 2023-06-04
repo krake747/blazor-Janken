@@ -1,4 +1,6 @@
-﻿@inject ILogger Logger
+﻿@using Components.Enums
+@using System.Data
+@inject ILogger Logger
 
 <h3>Rock Paper Scissors</h3>
 <p>Choose a shape</p>
@@ -11,11 +13,34 @@
 <button class="btn btn-primary" @onclick="@(() => { JankenRound(Shape.Scissors); })">
     Scissors
 </button>
+<hr/>
+<div>Results - Round @(_playerGameStates.Count)</div>
+@if (_playerGameStates.Count is 0)
+{
+    <div>No round was played yet</div>
+}
+else
+{
+    LatestState = _playerGameStates.Last();
+    {
+        UpdateJankenScore(LatestState);
+    }
+    <JankenResult State="@LatestState"></JankenResult>
+}
+<hr/>
+<div>Player Score: @PlayerScore</div>
+<div>Computer Score: @ComputerScore</div>
+
 
 @code {
     private readonly Shape[] _handShapes = { Shape.Rock, Shape.Paper, Shape.Scissors };
+    private readonly List<GameState> _playerGameStates = new();
 
-    private void JankenRound(Shape playerChoice)
+    private int PlayerScore { get; set; }
+    private int ComputerScore { get; set; }
+    private GameState LatestState { get; set; } 
+
+    private Task JankenRound(Shape playerChoice)
     {
         var computer = ComputerChoice();
         Logger.Information("Player 1 {Choice} vs Computer {Random}", EnumName(playerChoice), EnumName(computer));
@@ -23,6 +48,8 @@
         if (playerChoice == computer)
         {
             Logger.Information("Round ends in {State}", nameof(GameState.Draw));
+            _playerGameStates.Add(GameState.Draw);
+            return Task.CompletedTask;
         }
 
         var state = (playerChoice, computer) switch 
@@ -31,9 +58,27 @@
             (Shape.Paper, Shape.Scissors) => GameState.Loss,
             (Shape.Scissors, Shape.Rock) => GameState.Loss,
             (_, _) => GameState.Win
-            };
+        };
 
         Logger.Information("Round ends in {State} for Player", EnumName(state));
+        _playerGameStates.Add(state);
+        return Task.CompletedTask;
+    }
+
+    private void UpdateJankenScore(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.Win:
+                PlayerScore++;
+                break;
+            case GameState.Loss:
+                ComputerScore++;
+                break;
+            case GameState.Draw:
+            default:
+                break;
+        }
     }
 
     private Shape ComputerChoice()
@@ -44,20 +89,6 @@
     private static string EnumName<T>(T enumObj) where T : Enum
     {
         return Enum.GetName(typeof(T), enumObj) ?? string.Empty;
-    }
-
-    public enum Shape
-    {
-        Rock,
-        Paper,
-        Scissors
-    }
-
-    public enum GameState
-    {
-        Draw,
-        Win,
-        Loss
     }
 
 }

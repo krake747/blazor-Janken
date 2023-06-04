@@ -1,0 +1,27 @@
+﻿@using Components.Enums
+<div class="@(DivClassColor())">@(DivText())</div>
+
+@code {
+    [Parameter]
+    public GameState State { get; set; }
+
+    private string DivClassColor()
+    {
+        return State switch
+        {
+            GameState.Win => "alert alert-success",
+            GameState.Loss => "alert alert-danger",
+            _ => "alert alert-secondary"
+        };
+    }
+    
+    private string DivText()
+    {
+        return State switch
+        {
+            GameState.Win => "Player wins",
+            GameState.Loss => "Computer wins",
+            _ => "It's a draw"
+        };
+    }
+}
