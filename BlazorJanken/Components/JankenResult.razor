@@ -1,14 +1,17 @@
 ﻿@using BlazorJanken.Components.Enums
-<div class="@(DivClassColor())">@(DivText())</div>
+@using BlazorJanken.Components.Models
+@using System.Text
+@using Microsoft.Extensions.Primitives
+<div class="@(DivClassColor())" style="font-size: large">@(DivInnerText())</div>
 
 @code {
 
     [Parameter]
-    public GameState State { get; set; }
+    public RoundResult RoundResult { get; set; }
 
     private string DivClassColor()
     {
-        return State switch
+        return RoundResult.State switch
         {
             GameState.Win => "alert alert-success",
             GameState.Loss => "alert alert-danger",
@@ -16,14 +19,23 @@
         };
     }
 
-    private string DivText()
+    private string DivInnerText()
     {
-        return State switch
+        return new StringBuilder()
+            .Append(StateStatus())
+            .Append($"{RoundResult.Player.ToEmoji()} vs {RoundResult.Computer.ToEmoji()}")
+            .ToString();
+    }
+
+    private string StateStatus()
+    {
+        return RoundResult.State switch
         {
-            GameState.Win => "Player wins",
-            GameState.Loss => "Computer wins",
-            _ => "It's a draw"
+            GameState.Win => "Player wins ",
+            GameState.Loss => "Player losses ",
+            _ => "It's a draw "
         };
     }
+
 
 }
