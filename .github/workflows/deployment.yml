@@ -30,7 +30,13 @@ jobs:
       # changes the base-tag in index.html from '/' to 'blazor-janken' to match GitHub Pages repository subdirectory
       # - name: Change base-tag in index.html from / to blazor-janken
       #   run: sed -i 's/<base href="\/" \/>/<base href="\/blazor-janken\/" \/>/g' build/wwwroot/index.html
-        
+      
+      - name: Rewrite base href
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
+        with:
+          html_path: build/wwwroot/index.html
+          base_href: /blazor-janken/
+      
       # copy index.html to 404.html to serve the same file when a file is not found
       - name: copy index.html to 404.html
         run: cp build/wwwroot/index.html build/wwwroot/404.html
