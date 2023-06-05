@@ -22,20 +22,14 @@ jobs:
       # Install dotnet wasm buildtools workload
       - name: Install .NET WASM Build Tools
         run: dotnet workload install wasm-tools
-
-      # Run tests
-      # - name: Test
-      #   run: dotnet test
         
       # Generate the website
       - name: Publish .NET Core Project
-        run: dotnet publish BlazorJanken/BlazorJanken.csproj -c Release -o build -p GHPages=true --nologo
-      #  run: dotnet publish -c Release -o build
-      #  run: dotnet publish -c Release --property PublishDir=${{env.DOTNET_ROOT}}/build
+        run: dotnet publish BlazorJanken/BlazorJanken.csproj -c Release -o build --nologo
 
       # changes the base-tag in index.html from '/' to 'blazor-janken' to match GitHub Pages repository subdirectory
-      - name: Change base-tag in index.html from / to BlazorGitHubPagesDemo
-        run: sed -i 's/<base href="\/" \/>/<base href="\/blazor-janken\/" \/>/g' build/wwwroot/index.html
+      # - name: Change base-tag in index.html from / to blazor-janken
+      #   run: sed -i 's/<base href="\/" \/>/<base href="\/blazor-janken\/" \/>/g' build/wwwroot/index.html
         
       # copy index.html to 404.html to serve the same file when a file is not found
       - name: copy index.html to 404.html
